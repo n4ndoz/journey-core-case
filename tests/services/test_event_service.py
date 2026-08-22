@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import timezone
 from uuid import UUID
 
 import pytest
@@ -91,6 +91,15 @@ def test_emit_persists_through_event_repository() -> None:
 def test_emit_rejects_untyped_properties(event_service: EventService) -> None:
     with pytest.raises(TypeError):
         event_service.emit(EventName.PATIENT_CREATED, PATIENT_HASH, {"phone": "123"})  # type: ignore[arg-type]
+
+
+def test_emit_rejects_properties_for_wrong_event(event_service: EventService) -> None:
+    with pytest.raises(TypeError):
+        event_service.emit(
+            EventName.PATIENT_CREATED,
+            PATIENT_HASH,
+            ProtocolStartedProperties(template_id="phq9", template_version="1"),
+        )
 
 
 def test_event_property_schema_forbids_extra_fields() -> None:
