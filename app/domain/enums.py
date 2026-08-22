@@ -25,3 +25,11 @@ class EventName(StrEnum):
     TASK_COMPLETED = "task_completed"
     FOLLOWUP_ELIGIBLE = "followup_eligible"
     FOLLOWUP_SKIPPED = "followup_skipped"
+
+
+class FollowupSkipReason(StrEnum):
+    MISSING_CONSENT = "missing_consent"
+    PROTOCOL_NOT_COMPLETED = "protocol_not_completed"
+    JOURNEY_NOT_ACTIVE = "journey_not_active"
+    NO_ACTIVE_TASK = "no_active_task"
+    COOLDOWN = "cooldown"
