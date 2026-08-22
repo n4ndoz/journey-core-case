@@ -3,7 +3,7 @@ from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
 
-from app.domain.enums import JourneyStatus, ProtocolSessionStatus, TaskStatus
+from app.domain.enums import EventName, JourneyStatus, ProtocolSessionStatus, TaskStatus
 
 
 class Patient(BaseModel):
@@ -83,6 +83,6 @@ class Journey(BaseModel):
 class Event(BaseModel):
     event_id: UUID = Field(default_factory=uuid4)
     occurred_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    event_name: str
+    event_name: EventName
     patient_id_hash: str
     properties: dict[str, object] = Field(default_factory=dict)
