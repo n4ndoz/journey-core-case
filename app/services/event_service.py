@@ -27,6 +27,17 @@ TypedEventProperties: TypeAlias = (
     | FollowupSkippedProperties
 )
 
+_EVENT_PROPERTY_TYPES: dict[EventName, type[EventProperties]] = {
+    EventName.PATIENT_CREATED: PatientCreatedProperties,
+    EventName.TERMS_ACCEPTED: TermsAcceptedProperties,
+    EventName.PROTOCOL_STARTED: ProtocolStartedProperties,
+    EventName.PROTOCOL_COMPLETED: ProtocolCompletedProperties,
+    EventName.JOURNEY_CREATED: JourneyCreatedProperties,
+    EventName.TASK_COMPLETED: TaskCompletedProperties,
+    EventName.FOLLOWUP_ELIGIBLE: FollowupEligibleProperties,
+    EventName.FOLLOWUP_SKIPPED: FollowupSkippedProperties,
+}
+
 
 class EventService:
     def __init__(self, repository: EventRepository) -> None:
@@ -38,8 +49,11 @@ class EventService:
         patient_id_hash: str,
         properties: TypedEventProperties,
     ) -> Event:
-        if not isinstance(properties, EventProperties):
-            raise TypeError("properties must be a typed EventProperties model")
+        expected_type = _EVENT_PROPERTY_TYPES[event_name]
+        if not isinstance(properties, expected_type):
+            raise TypeError(
+                f"properties for {event_name.value} must be {expected_type.__name__}"
+            )
 
         event = Event(
             occurred_at=datetime.now(timezone.utc),
