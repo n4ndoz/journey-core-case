@@ -1,7 +1,7 @@
 from datetime import date, timezone
 from uuid import UUID
 
-from app.domain.enums import JourneyStatus, ProtocolSessionStatus, TaskStatus
+from app.domain.enums import EventName, JourneyStatus, ProtocolSessionStatus, TaskStatus
 from app.domain.models import (
     Event,
     Journey,
@@ -86,13 +86,15 @@ def test_journey_and_task_start_in_progress() -> None:
     assert journey.tasks[0].status == TaskStatus.IN_PROGRESS
 
 
-def test_event_has_expected_audit_envelope() -> None:
+def test_event_uses_event_name_taxonomy() -> None:
     event = Event(
-        event_name="patient_created",
+        event_name=EventName.PATIENT_CREATED,
         patient_id_hash="hash",
         properties={"source": "test"},
     )
 
+    assert event.event_name is EventName.PATIENT_CREATED
+    assert event.event_name.value == "patient_created"
     assert isinstance(event.event_id, UUID)
     assert event.occurred_at.tzinfo is not None
     assert event.occurred_at.utcoffset() is not None
