@@ -1,4 +1,5 @@
 from datetime import date
+from uuid import uuid4
 
 from app.domain.enums import EventName
 from app.domain.event_properties import PatientCreatedProperties, TermsAcceptedProperties
@@ -27,7 +28,10 @@ class PatientService:
         sex: str,
         terms_accepted: bool,
     ) -> Patient:
+        patient_id = uuid4()
         patient = Patient(
+            patient_id=patient_id,
+            patient_id_hash=self._phone_hasher.hash_patient_id(patient_id),
             phone=phone,
             phone_hash=self._phone_hasher.hash(phone),
             name=name,
@@ -38,13 +42,13 @@ class PatientService:
         self._patient_repository.save(patient)
         self._event_service.emit(
             EventName.PATIENT_CREATED,
-            patient.phone_hash,
+            patient.patient_id_hash,
             PatientCreatedProperties(),
         )
         if patient.terms_accepted:
             self._event_service.emit(
                 EventName.TERMS_ACCEPTED,
-                patient.phone_hash,
+                patient.patient_id_hash,
                 TermsAcceptedProperties(),
             )
         return patient
