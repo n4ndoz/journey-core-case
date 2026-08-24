@@ -41,6 +41,7 @@ class QuestionOptionResponse(BaseModel):
 class QuestionResponse(BaseModel):
     id: str
     text: str
+    type: str
     options: list[QuestionOptionResponse]
 
 
