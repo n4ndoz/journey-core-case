@@ -1,7 +1,8 @@
 from datetime import date, datetime, timezone
+from typing import Self
 from uuid import UUID, uuid4
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 from app.domain.enums import EventName, JourneyStatus, ProtocolSessionStatus, TaskStatus
 
@@ -16,36 +17,56 @@ class Patient(BaseModel):
     terms_accepted: bool = False
 
 
+class QuestionOption(BaseModel):
+    value: int | str
+    label: str = Field(min_length=1)
+
+
 class Question(BaseModel):
-    id: str
-    text: str
-    type: str
-    options: list[int | str] = Field(default_factory=list)
+    id: str = Field(min_length=1)
+    text: str = Field(min_length=1)
+    type: str = Field(min_length=1)
+    options: list[QuestionOption]
 
 
 class SkipRuleTrigger(BaseModel):
-    after_question: str
+    after_question: str = Field(min_length=1)
 
 
 class SkipRuleCondition(BaseModel):
-    operator: str
-    questions: list[str]
-    comparison: str
+    operator: str = Field(min_length=1)
+    questions: list[str] = Field(min_length=1)
+    comparison: str = Field(min_length=1)
     value: int | float | str
 
 
 class SkipRule(BaseModel):
     trigger: SkipRuleTrigger
     condition: SkipRuleCondition
-    action: str
+    action: str = Field(min_length=1)
 
 
 class ProtocolTemplate(BaseModel):
-    template_id: str
-    version: str
-    name: str
-    questions: list[Question]
+    template_id: str = Field(min_length=1)
+    version: str = Field(min_length=1)
+    name: str = Field(min_length=1)
+    questions: list[Question] = Field(min_length=1)
     skip_rules: list[SkipRule] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def validate_internal_references(self) -> Self:
+        question_ids = [question.id for question in self.questions]
+        if len(question_ids) != len(set(question_ids)):
+            raise ValueError("question ids must be unique")
+
+        known_ids = set(question_ids)
+        for rule in self.skip_rules:
+            if rule.trigger.after_question not in known_ids:
+                raise ValueError("skip rule trigger references an unknown question")
+            if any(question_id not in known_ids for question_id in rule.condition.questions):
+                raise ValueError("skip rule condition references an unknown question")
+
+        return self
 
 
 class ProtocolAnswer(BaseModel):

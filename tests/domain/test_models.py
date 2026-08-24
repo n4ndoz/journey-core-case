@@ -10,6 +10,7 @@ from app.domain.models import (
     ProtocolSession,
     ProtocolTemplate,
     Question,
+    QuestionOption,
     SkipRule,
     SkipRuleCondition,
     SkipRuleTrigger,
@@ -31,7 +32,14 @@ def test_patient_has_internal_id_and_consent_default() -> None:
 
 
 def test_protocol_template_contains_questions_and_skip_rules() -> None:
-    question = Question(id="q1", text="Question", type="likert", options=[0, 1, 2, 3])
+    options = [
+        QuestionOption(value=0, label="Nenhuma vez"),
+        QuestionOption(value=1, label="Vários dias"),
+    ]
+    questions = [
+        Question(id="q1", text="Question 1", type="likert", options=options),
+        Question(id="q2", text="Question 2", type="likert", options=options),
+    ]
     rule = SkipRule(
         trigger=SkipRuleTrigger(after_question="q2"),
         condition=SkipRuleCondition(
@@ -47,11 +55,12 @@ def test_protocol_template_contains_questions_and_skip_rules() -> None:
         template_id="phq9",
         version="1",
         name="PHQ-9",
-        questions=[question],
+        questions=questions,
         skip_rules=[rule],
     )
 
     assert template.questions[0].id == "q1"
+    assert template.questions[0].options[0].value == 0
     assert template.skip_rules[0].action == "end_block"
 
 
