@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 from app.domain.enums import (
     EventName,
@@ -56,6 +56,13 @@ class ProtocolAnswerRequest(BaseModel):
     question_id: str
     value: int | float | str
 
+    @field_validator("value", mode="before")
+    @classmethod
+    def reject_boolean_value(cls, value: object) -> object:
+        if isinstance(value, bool):
+            raise ValueError("boolean answers are not allowed")
+        return value
+
 
 class ProtocolAnswerResponse(BaseModel):
     session_id: UUID
@@ -100,8 +107,3 @@ class EventResponse(BaseModel):
     event_name: EventName
     patient_id_hash: str
     properties: dict[str, object]
-
-
-class ErrorResponse(BaseModel):
-    error: str
-    message: str
