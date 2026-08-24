@@ -24,6 +24,11 @@ class ProtocolRepository:
     def get(self, session_id: UUID) -> ProtocolSession | None:
         return self._sessions.get(session_id)
 
+    def list_by_patient(self, patient_id: UUID) -> list[ProtocolSession]:
+        return [
+            session for session in self._sessions.values() if session.patient_id == patient_id
+        ]
+
 
 class JourneyRepository:
     def __init__(self) -> None:
