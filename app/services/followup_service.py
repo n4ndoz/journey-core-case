@@ -55,7 +55,7 @@ class FollowupService:
         journey_status = journey.status if journey is not None else JourneyStatus.COMPLETED
         tasks = journey.tasks if journey is not None else []
 
-        history = self._event_repository.list_by_patient(patient.phone_hash)
+        history = self._event_repository.list_by_patient(patient.patient_id_hash)
         eligible_events = [
             event for event in history if event.event_name == EventName.FOLLOWUP_ELIGIBLE
         ]
@@ -79,7 +79,7 @@ class FollowupService:
                 raise ValueError("eligible follow-up decision requires template_key")
             self._event_service.emit(
                 EventName.FOLLOWUP_ELIGIBLE,
-                patient.phone_hash,
+                patient.patient_id_hash,
                 FollowupEligibleProperties(template_key=decision.template_key),
                 occurred_at=evaluation_time,
             )
@@ -88,7 +88,7 @@ class FollowupService:
                 raise ValueError("skipped follow-up decision requires reason")
             self._event_service.emit(
                 EventName.FOLLOWUP_SKIPPED,
-                patient.phone_hash,
+                patient.patient_id_hash,
                 FollowupSkippedProperties(reason=decision.reason),
                 occurred_at=evaluation_time,
             )
