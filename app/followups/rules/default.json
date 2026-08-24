@@ -1,0 +1,11 @@
+{
+  "template_key": "checkin_adesao",
+  "cooldown_hours": 72,
+  "rules": [
+    {"type": "consent_required", "reason": "missing_consent"},
+    {"type": "protocol_completed", "reason": "protocol_not_completed"},
+    {"type": "journey_active", "reason": "journey_not_active"},
+    {"type": "active_task_required", "reason": "no_active_task"},
+    {"type": "cooldown", "reason": "cooldown"}
+  ]
+}
