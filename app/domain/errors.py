@@ -38,6 +38,10 @@ class UnsupportedProtocolRule(DomainError):
     pass
 
 
+class UnsupportedFollowupRule(DomainError):
+    pass
+
+
 class JourneyNotFound(DomainError):
     pass
 
