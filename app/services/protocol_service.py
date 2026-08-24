@@ -49,7 +49,7 @@ class ProtocolService:
         self._protocol_repository.save(session)
         self._event_service.emit(
             EventName.PROTOCOL_STARTED,
-            patient.phone_hash,
+            patient.patient_id_hash,
             ProtocolStartedProperties(
                 template_id=template.template_id,
                 template_version=template.version,
@@ -84,7 +84,7 @@ class ProtocolService:
         self._protocol_repository.save(session)
         self._event_service.emit(
             EventName.PROTOCOL_COMPLETED,
-            patient.phone_hash,
+            patient.patient_id_hash,
             ProtocolCompletedProperties(
                 template_id=session.template_id,
                 template_version=session.template_version,
@@ -94,7 +94,7 @@ class ProtocolService:
         )
         self._journey_service.create_journey(
             patient_id=patient.patient_id,
-            patient_id_hash=patient.phone_hash,
+            patient_id_hash=patient.patient_id_hash,
             protocol_session=session,
         )
         return session
