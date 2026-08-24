@@ -22,6 +22,10 @@ class ProtocolAlreadyCompleted(DomainError):
     pass
 
 
+class ProtocolNotCompleted(DomainError):
+    pass
+
+
 class InvalidAnswer(DomainError):
     pass
 
@@ -31,6 +35,10 @@ class QuestionMismatch(DomainError):
 
 
 class UnsupportedProtocolRule(DomainError):
+    pass
+
+
+class UnsupportedFollowupRule(DomainError):
     pass
 
 
