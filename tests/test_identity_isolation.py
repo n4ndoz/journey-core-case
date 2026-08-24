@@ -90,6 +90,15 @@ def test_same_phone_patients_have_isolated_event_identity_and_cooldown() -> None
     assert followup_a.status_code == 200
     assert followup_a.json()["eligible"] is True
 
+    journey_a = client.get(f"/patients/{patient_a['patient_id']}/journey")
+    assert journey_a.status_code == 200
+    journey_a_body = journey_a.json()
+    task_a = journey_a_body["tasks"][0]
+    task_completion_a = client.post(
+        f"/journeys/{journey_a_body['journey_id']}/tasks/{task_a['task_id']}/complete"
+    )
+    assert task_completion_a.status_code == 200
+
     before_protocol_b = client.post(
         "/followups/evaluate",
         json={"patient_id": patient_b["patient_id"]},
@@ -122,6 +131,7 @@ def test_same_phone_patients_have_isolated_event_identity_and_cooldown() -> None
         {event["event_id"] for event in events_b}
     )
     assert [event["event_name"] for event in events_a].count("followup_eligible") == 1
+    assert [event["event_name"] for event in events_a].count("task_completed") == 1
     assert [event["event_name"] for event in events_b].count("followup_eligible") == 1
 
     hash_as_patient_id = client.get(
@@ -144,6 +154,8 @@ def test_same_phone_patients_have_isolated_event_identity_and_cooldown() -> None
         *protocol_responses_a,
         *protocol_responses_b,
         followup_a,
+        journey_a,
+        task_completion_a,
         before_protocol_b,
         followup_b,
         events_a_response,
