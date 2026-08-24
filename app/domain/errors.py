@@ -22,6 +22,10 @@ class ProtocolAlreadyCompleted(DomainError):
     pass
 
 
+class ProtocolNotCompleted(DomainError):
+    pass
+
+
 class InvalidAnswer(DomainError):
     pass
 
