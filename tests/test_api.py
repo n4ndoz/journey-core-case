@@ -145,7 +145,7 @@ def test_journey_query_and_task_completion() -> None:
     response = client.get(f"/patients/{patient['patient_id']}/journey")
     assert response.status_code == 200
     journey = response.json()
-    assert journey["status"] == "in_progress"
+    assert journey["status"] == "em_andamento"
     assert journey["objective"] == "Acompanhamento após protocolo clínico"
     assert len(journey["tasks"]) == 1
     task = journey["tasks"][0]

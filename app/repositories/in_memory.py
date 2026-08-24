@@ -52,10 +52,14 @@ class EventRepository:
         self._events: list[Event] = []
 
     def append(self, event: Event) -> None:
-        self._events.append(event)
+        self._events.append(event.model_copy(deep=True))
 
     def list_by_patient(self, patient_id_hash: str) -> list[Event]:
-        return [event for event in self._events if event.patient_id_hash == patient_id_hash]
+        return [
+            event.model_copy(deep=True)
+            for event in self._events
+            if event.patient_id_hash == patient_id_hash
+        ]
 
     def list_all(self) -> list[Event]:
-        return list(self._events)
+        return [event.model_copy(deep=True) for event in self._events]
