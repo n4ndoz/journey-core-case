@@ -1,9 +1,6 @@
-import os
 from uuid import uuid4
 
 from fastapi.testclient import TestClient
-
-os.environ.setdefault("PHONE_HASH_SALT", "test-salt")
 
 from app.main import app
 
@@ -64,6 +61,7 @@ def test_protocol_start_returns_prompt_and_first_question() -> None:
     body = response.json()
     assert body["status"] == "in_progress"
     assert body["current_question"]["id"] == "1"
+    assert body["current_question"]["type"] == "likert"
     assert body["current_question"]["options"][0] == {
         "value": 0,
         "label": "Nenhuma vez",
@@ -226,3 +224,24 @@ def test_events_and_journey_for_missing_patient_are_404() -> None:
     assert events.json()["error"] == "patient_not_found"
     assert journey.status_code == 404
     assert journey.json()["error"] == "patient_not_found"
+
+
+def test_request_validation_error_does_not_echo_phone() -> None:
+    phone = "+55 11 98888-7777"
+    response = client.post(
+        "/patients",
+        json={
+            "phone": phone,
+            "name": "Paciente Inválido",
+            "birth_date": "not-a-date",
+            "sex": "F",
+            "terms_accepted": True,
+        },
+    )
+
+    assert response.status_code == 422
+    assert response.json() == {
+        "error": "validation_error",
+        "message": "Invalid request",
+    }
+    assert phone not in response.text
