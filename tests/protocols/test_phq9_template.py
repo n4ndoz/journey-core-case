@@ -15,6 +15,7 @@ def test_phq9_template_metadata_and_question_sequence() -> None:
     assert template.template_id == "phq9"
     assert template.version == "1.0"
     assert template.name == "PHQ-9"
+    assert template.prompt == "Nas últimas duas semanas, com que frequência você foi incomodado por…"
     assert len(template.questions) == 9
     assert [question.id for question in template.questions] == [str(index) for index in range(1, 10)]
 

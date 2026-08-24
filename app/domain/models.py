@@ -50,6 +50,7 @@ class ProtocolTemplate(BaseModel):
     template_id: str = Field(min_length=1)
     version: str = Field(min_length=1)
     name: str = Field(min_length=1)
+    prompt: str = ""
     questions: list[Question] = Field(min_length=1)
     skip_rules: list[SkipRule] = Field(default_factory=list)
 
