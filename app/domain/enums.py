@@ -7,8 +7,8 @@ class ProtocolSessionStatus(StrEnum):
 
 
 class JourneyStatus(StrEnum):
-    IN_PROGRESS = "in_progress"
-    COMPLETED = "completed"
+    IN_PROGRESS = "em_andamento"
+    COMPLETED = "concluida"
 
 
 class TaskStatus(StrEnum):
