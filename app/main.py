@@ -1,11 +1,13 @@
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
 
 from app.api import router
 from app.domain.errors import DomainError
-from app.error_handlers import domain_error_handler
+from app.error_handlers import domain_error_handler, request_validation_error_handler
 
 app = FastAPI(title="AINA Health journey-core")
 app.add_exception_handler(DomainError, domain_error_handler)
+app.add_exception_handler(RequestValidationError, request_validation_error_handler)
 app.include_router(router)
 
 
