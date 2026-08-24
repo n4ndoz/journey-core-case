@@ -46,7 +46,7 @@ def test_complete_http_acceptance_flow() -> None:
     journey_response = client.get(f"/patients/{patient_id}/journey")
     assert journey_response.status_code == 200
     journey = journey_response.json()
-    assert journey["status"] == "in_progress"
+    assert journey["status"] == "em_andamento"
     assert len(journey["tasks"]) == 1
     assert journey["tasks"][0]["status"] == "in_progress"
 
