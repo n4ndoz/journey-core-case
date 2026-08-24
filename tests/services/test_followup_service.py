@@ -159,6 +159,27 @@ def test_first_eligible_then_immediate_second_evaluation_is_cooldown() -> None:
     assert names == [EventName.FOLLOWUP_ELIGIBLE, EventName.FOLLOWUP_SKIPPED]
 
 
+def test_controlled_evaluation_time_is_used_for_events_and_72h_boundary() -> None:
+    service, patient, event_repository = make_eligible_state()
+
+    first = service.evaluate(patient.patient_id, evaluated_at=NOW)
+    before_boundary = NOW + timedelta(hours=71, minutes=59, seconds=59)
+    second = service.evaluate(patient.patient_id, evaluated_at=before_boundary)
+    at_boundary = NOW + timedelta(hours=72)
+    third = service.evaluate(patient.patient_id, evaluated_at=at_boundary)
+
+    assert first.eligible is True
+    assert second.reason == FollowupSkipReason.COOLDOWN
+    assert third.eligible is True
+    events = event_repository.list_all()
+    assert [event.event_name for event in events] == [
+        EventName.FOLLOWUP_ELIGIBLE,
+        EventName.FOLLOWUP_SKIPPED,
+        EventName.FOLLOWUP_ELIGIBLE,
+    ]
+    assert [event.occurred_at for event in events] == [NOW, before_boundary, at_boundary]
+
+
 def test_cooldown_boundary_at_exactly_72_hours_is_eligible() -> None:
     service, patient, event_repository = make_eligible_state()
     event_repository.append(

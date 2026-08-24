@@ -40,6 +40,8 @@ class FollowupService:
         patient_id: UUID,
         evaluated_at: datetime | None = None,
     ) -> FollowupDecision:
+        evaluation_time = evaluated_at or datetime.now(timezone.utc)
+
         patient = self._patient_repository.get(patient_id)
         if patient is None:
             raise PatientNotFound()
@@ -68,7 +70,7 @@ class FollowupService:
             journey_status=journey_status,
             tasks=tasks,
             last_followup_eligible_at=last_followup_eligible_at,
-            evaluated_at=evaluated_at or datetime.now(timezone.utc),
+            evaluated_at=evaluation_time,
         )
         decision = self._followup_engine.evaluate(context, rules)
 
@@ -79,6 +81,7 @@ class FollowupService:
                 EventName.FOLLOWUP_ELIGIBLE,
                 patient.phone_hash,
                 FollowupEligibleProperties(template_key=decision.template_key),
+                occurred_at=evaluation_time,
             )
         else:
             if decision.reason is None:
@@ -87,6 +90,7 @@ class FollowupService:
                 EventName.FOLLOWUP_SKIPPED,
                 patient.phone_hash,
                 FollowupSkippedProperties(reason=decision.reason),
+                occurred_at=evaluation_time,
             )
 
         return decision

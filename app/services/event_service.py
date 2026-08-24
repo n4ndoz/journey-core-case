@@ -48,6 +48,7 @@ class EventService:
         event_name: EventName,
         patient_id_hash: str,
         properties: TypedEventProperties,
+        occurred_at: datetime | None = None,
     ) -> Event:
         expected_type = _EVENT_PROPERTY_TYPES[event_name]
         if not isinstance(properties, expected_type):
@@ -56,7 +57,7 @@ class EventService:
             )
 
         event = Event(
-            occurred_at=datetime.now(timezone.utc),
+            occurred_at=occurred_at or datetime.now(timezone.utc),
             event_name=event_name,
             patient_id_hash=patient_id_hash,
             properties=properties.model_dump(mode="json"),
