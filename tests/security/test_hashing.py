@@ -1,3 +1,5 @@
+import pytest
+
 from app.security.hashing import PhoneHasher
 
 
@@ -24,3 +26,23 @@ def test_cleartext_phone_does_not_appear_in_hash() -> None:
     phone = "+55 (21) 99999-9999"
 
     assert phone not in PhoneHasher("salt").hash(phone)
+
+
+def test_missing_phone_hash_salt_fails_explicitly(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("PHONE_HASH_SALT", raising=False)
+
+    with pytest.raises(ValueError, match="PHONE_HASH_SALT must be configured"):
+        PhoneHasher()
+
+
+def test_empty_phone_hash_salt_fails_explicitly(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("PHONE_HASH_SALT", "")
+
+    with pytest.raises(ValueError, match="PHONE_HASH_SALT must be configured"):
+        PhoneHasher()
+
+
+def test_configured_test_salt_works() -> None:
+    phone = "+55 (21) 99999-9999"
+
+    assert PhoneHasher().hash(phone) == PhoneHasher("test-salt").hash(phone)
