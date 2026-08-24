@@ -50,37 +50,43 @@ class ProtocolEngine:
         if answer.value not in allowed_values:
             raise InvalidAnswer()
 
-        session.answers.append(answer)
-        score = self._calculate_score(session.answers)
+        candidate_answers = [*session.answers, answer]
+        score = self._calculate_score(candidate_answers)
 
         for rule in template.skip_rules:
             if rule.trigger.after_question != answer.question_id:
                 continue
-            if self._evaluate_rule(rule, session.answers):
+            if self._evaluate_rule(rule, candidate_answers):
                 if rule.action != "end_block":
                     raise UnsupportedProtocolRule(f"unsupported action: {rule.action}")
-                return ProtocolDecision(
+                decision = ProtocolDecision(
                     action=ProtocolDecisionAction.END_BLOCK,
                     next_question_id=None,
                     score=score,
                     ended_by_skip=True,
                 )
+                session.answers.append(answer)
+                return decision
 
         next_question_id = self._find_next_question(answer.question_id, template)
         if next_question_id is None:
-            return ProtocolDecision(
+            decision = ProtocolDecision(
                 action=ProtocolDecisionAction.COMPLETE,
                 next_question_id=None,
                 score=score,
                 ended_by_skip=False,
             )
+            session.answers.append(answer)
+            return decision
 
-        return ProtocolDecision(
+        decision = ProtocolDecision(
             action=ProtocolDecisionAction.CONTINUE,
             next_question_id=next_question_id,
             score=score,
             ended_by_skip=False,
         )
+        session.answers.append(answer)
+        return decision
 
     def _evaluate_rule(self, rule: SkipRule, answers: list[ProtocolAnswer]) -> bool:
         if rule.condition.operator != "sum":
