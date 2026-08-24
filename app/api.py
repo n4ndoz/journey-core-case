@@ -38,6 +38,7 @@ def _question_response(question: Question) -> QuestionResponse:
     return QuestionResponse(
         id=question.id,
         text=question.text,
+        type=question.type,
         options=[
             QuestionOptionResponse(value=option.value, label=option.label)
             for option in question.options
