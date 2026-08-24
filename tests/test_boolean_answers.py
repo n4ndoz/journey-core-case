@@ -49,6 +49,9 @@ def _make_service() -> tuple[
 
 
 def test_internal_boolean_answer_is_rejected_atomically_and_session_recovers() -> None:
+    with pytest.raises(ValueError):
+        ProtocolAnswer(question_id="1", value=True)
+
     service, patients, journeys, events = _make_service()
     patient = Patient(
         patient_id_hash="patient-id-hash",
