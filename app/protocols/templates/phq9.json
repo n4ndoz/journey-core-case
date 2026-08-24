@@ -1,0 +1,119 @@
+{
+  "template_id": "phq9",
+  "version": "1.0",
+  "name": "PHQ-9",
+  "prompt": "Nas últimas duas semanas, com que frequência você foi incomodado por…",
+  "questions": [
+    {
+      "id": "1",
+      "text": "Pouco interesse ou prazer em fazer as coisas",
+      "type": "likert",
+      "options": [
+        {"value": 0, "label": "Nenhuma vez"},
+        {"value": 1, "label": "Vários dias"},
+        {"value": 2, "label": "Mais da metade dos dias"},
+        {"value": 3, "label": "Quase todos os dias"}
+      ]
+    },
+    {
+      "id": "2",
+      "text": "Sentir-se para baixo, deprimido(a) ou sem esperança",
+      "type": "likert",
+      "options": [
+        {"value": 0, "label": "Nenhuma vez"},
+        {"value": 1, "label": "Vários dias"},
+        {"value": 2, "label": "Mais da metade dos dias"},
+        {"value": 3, "label": "Quase todos os dias"}
+      ]
+    },
+    {
+      "id": "3",
+      "text": "Dificuldade para pegar no sono, continuar dormindo, ou dormir demais",
+      "type": "likert",
+      "options": [
+        {"value": 0, "label": "Nenhuma vez"},
+        {"value": 1, "label": "Vários dias"},
+        {"value": 2, "label": "Mais da metade dos dias"},
+        {"value": 3, "label": "Quase todos os dias"}
+      ]
+    },
+    {
+      "id": "4",
+      "text": "Sentir-se cansado(a) ou com pouca energia",
+      "type": "likert",
+      "options": [
+        {"value": 0, "label": "Nenhuma vez"},
+        {"value": 1, "label": "Vários dias"},
+        {"value": 2, "label": "Mais da metade dos dias"},
+        {"value": 3, "label": "Quase todos os dias"}
+      ]
+    },
+    {
+      "id": "5",
+      "text": "Falta de apetite ou comer demais",
+      "type": "likert",
+      "options": [
+        {"value": 0, "label": "Nenhuma vez"},
+        {"value": 1, "label": "Vários dias"},
+        {"value": 2, "label": "Mais da metade dos dias"},
+        {"value": 3, "label": "Quase todos os dias"}
+      ]
+    },
+    {
+      "id": "6",
+      "text": "Sentir-se mal consigo mesmo(a) — ou que é um fracasso, ou que decepcionou a família ou a si mesmo(a)",
+      "type": "likert",
+      "options": [
+        {"value": 0, "label": "Nenhuma vez"},
+        {"value": 1, "label": "Vários dias"},
+        {"value": 2, "label": "Mais da metade dos dias"},
+        {"value": 3, "label": "Quase todos os dias"}
+      ]
+    },
+    {
+      "id": "7",
+      "text": "Dificuldade para se concentrar nas coisas (ex.: ler ou ver televisão)",
+      "type": "likert",
+      "options": [
+        {"value": 0, "label": "Nenhuma vez"},
+        {"value": 1, "label": "Vários dias"},
+        {"value": 2, "label": "Mais da metade dos dias"},
+        {"value": 3, "label": "Quase todos os dias"}
+      ]
+    },
+    {
+      "id": "8",
+      "text": "Lentidão para se mover ou falar, ou o oposto: inquietação a ponto de movimentar-se mais que o habitual",
+      "type": "likert",
+      "options": [
+        {"value": 0, "label": "Nenhuma vez"},
+        {"value": 1, "label": "Vários dias"},
+        {"value": 2, "label": "Mais da metade dos dias"},
+        {"value": 3, "label": "Quase todos os dias"}
+      ]
+    },
+    {
+      "id": "9",
+      "text": "Pensamentos de que estaria melhor morto(a), ou de se ferir de alguma forma",
+      "type": "likert",
+      "options": [
+        {"value": 0, "label": "Nenhuma vez"},
+        {"value": 1, "label": "Vários dias"},
+        {"value": 2, "label": "Mais da metade dos dias"},
+        {"value": 3, "label": "Quase todos os dias"}
+      ]
+    }
+  ],
+  "skip_rules": [
+    {
+      "trigger": {"after_question": "2"},
+      "condition": {
+        "operator": "sum",
+        "questions": ["1", "2"],
+        "comparison": "lt",
+        "value": 3
+      },
+      "action": "end_block"
+    }
+  ]
+}

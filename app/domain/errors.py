@@ -30,6 +30,10 @@ class QuestionMismatch(DomainError):
     pass
 
 
+class UnsupportedProtocolRule(DomainError):
+    pass
+
+
 class JourneyNotFound(DomainError):
     pass
 
