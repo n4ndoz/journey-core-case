@@ -33,6 +33,8 @@ def test_create_patient_hashes_persists_and_emits_events_in_order() -> None:
     )
 
     assert patient.phone_hash == PhoneHasher(salt="test-salt").hash(patient.phone)
+    assert patient.patient_id_hash
+    assert patient.patient_id_hash != patient.phone_hash
     assert patient_repository.get(patient.patient_id) == patient
     assert [event.event_name for event in event_repository.list_all()] == [
         EventName.PATIENT_CREATED,
