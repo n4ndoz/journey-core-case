@@ -9,7 +9,7 @@ from app.domain.enums import EventName, JourneyStatus, ProtocolSessionStatus, Ta
 
 class Patient(BaseModel):
     patient_id: UUID = Field(default_factory=uuid4)
-    patient_id_hash: str = ""
+    patient_id_hash: str = Field(min_length=1)
     phone: str
     phone_hash: str
     name: str
