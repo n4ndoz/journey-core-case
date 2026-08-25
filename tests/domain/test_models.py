@@ -1,6 +1,9 @@
 from datetime import date, timezone
 from uuid import UUID
 
+import pytest
+from pydantic import ValidationError
+
 from app.domain.enums import EventName, JourneyStatus, ProtocolSessionStatus, TaskStatus
 from app.domain.models import (
     Event,
@@ -20,6 +23,7 @@ from app.domain.models import (
 
 def test_patient_has_internal_id_and_consent_default() -> None:
     patient = Patient(
+        patient_id_hash="patient-id-hash",
         phone="+5511999999999",
         phone_hash="hash",
         name="Test Patient",
@@ -29,6 +33,29 @@ def test_patient_has_internal_id_and_consent_default() -> None:
 
     assert isinstance(patient.patient_id, UUID)
     assert patient.terms_accepted is False
+
+
+def test_patient_requires_patient_id_hash() -> None:
+    with pytest.raises(ValidationError):
+        Patient(
+            phone="+5511999999999",
+            phone_hash="hash",
+            name="Test Patient",
+            birth_date=date(1990, 1, 1),
+            sex="F",
+        )
+
+
+def test_patient_rejects_empty_patient_id_hash() -> None:
+    with pytest.raises(ValidationError):
+        Patient(
+            patient_id_hash="",
+            phone="+5511999999999",
+            phone_hash="hash",
+            name="Test Patient",
+            birth_date=date(1990, 1, 1),
+            sex="F",
+        )
 
 
 def test_protocol_template_contains_questions_and_skip_rules() -> None:

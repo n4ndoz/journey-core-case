@@ -2,13 +2,14 @@ from datetime import date, datetime, timezone
 from typing import Self
 from uuid import UUID, uuid4
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from app.domain.enums import EventName, JourneyStatus, ProtocolSessionStatus, TaskStatus
 
 
 class Patient(BaseModel):
     patient_id: UUID = Field(default_factory=uuid4)
+    patient_id_hash: str = Field(min_length=1)
     phone: str
     phone_hash: str
     name: str
@@ -74,6 +75,13 @@ class ProtocolAnswer(BaseModel):
     question_id: str
     value: int | float | str
     answered_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+    @field_validator("value", mode="before")
+    @classmethod
+    def reject_boolean_value(cls, value: object) -> object:
+        if isinstance(value, bool):
+            raise ValueError("boolean answers are not allowed")
+        return value
 
 
 class ProtocolSession(BaseModel):

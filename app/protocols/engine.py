@@ -46,6 +46,9 @@ class ProtocolEngine:
         if question is None:
             raise QuestionMismatch()
 
+        if isinstance(answer.value, bool):
+            raise InvalidAnswer("boolean answers are not allowed")
+
         allowed_values = [option.value for option in question.options]
         if answer.value not in allowed_values:
             raise InvalidAnswer()

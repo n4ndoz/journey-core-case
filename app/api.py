@@ -138,7 +138,7 @@ def complete_task(journey_id: UUID, task_id: UUID) -> TaskCompletionResponse:
     patient = patient_repository.get(journey.patient_id)
     if patient is None:
         raise PatientNotFound()
-    task = journey_service.complete_task(journey_id, task_id, patient.phone_hash)
+    task = journey_service.complete_task(journey_id, task_id, patient.patient_id_hash)
     return TaskCompletionResponse(
         journey_id=journey_id,
         task_id=task.task_id,
@@ -159,5 +159,5 @@ def get_events(patient_id: UUID) -> list[EventResponse]:
         raise PatientNotFound()
     return [
         EventResponse(**event.model_dump())
-        for event in event_repository.list_by_patient(patient.phone_hash)
+        for event in event_repository.list_by_patient(patient.patient_id_hash)
     ]

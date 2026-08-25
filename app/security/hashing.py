@@ -1,6 +1,7 @@
 import hashlib
 import os
 import re
+from uuid import UUID
 
 
 class PhoneHasher:
@@ -16,4 +17,8 @@ class PhoneHasher:
     def hash(self, phone: str) -> str:
         normalized_phone = self.normalize(phone)
         payload = f"{self._salt}{normalized_phone}".encode("utf-8")
+        return hashlib.sha256(payload).hexdigest()
+
+    def hash_patient_id(self, patient_id: UUID) -> str:
+        payload = f"{self._salt}patient:{patient_id}".encode("utf-8")
         return hashlib.sha256(payload).hexdigest()

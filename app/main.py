@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 
+# Deliberately load configuration before imports that instantiate global hashers.
 load_dotenv()
 
 from fastapi import FastAPI

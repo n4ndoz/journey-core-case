@@ -56,6 +56,7 @@ def make_service() -> tuple[
 
 def save_patient(repository: PatientRepository, *, consent: bool = True) -> Patient:
     patient = Patient(
+        patient_id_hash="patient-id-hash",
         phone="5511999999999",
         phone_hash="patient-hash",
         name="Patient",
@@ -116,6 +117,7 @@ def test_valid_context_is_eligible_and_emits_configured_template_key() -> None:
     events = event_repository.list_all()
     assert len(events) == 1
     assert events[0].event_name == EventName.FOLLOWUP_ELIGIBLE
+    assert events[0].patient_id_hash == patient.patient_id_hash
     assert events[0].properties == {"template_key": "checkin_adesao"}
 
 
@@ -186,7 +188,7 @@ def test_cooldown_boundary_at_exactly_72_hours_is_eligible() -> None:
         Event(
             occurred_at=NOW - timedelta(hours=72),
             event_name=EventName.FOLLOWUP_ELIGIBLE,
-            patient_id_hash=patient.phone_hash,
+            patient_id_hash=patient.patient_id_hash,
             properties={"template_key": "checkin_adesao"},
         )
     )
@@ -206,7 +208,7 @@ def test_recent_followup_produces_cooldown_skip() -> None:
         Event(
             occurred_at=NOW - timedelta(hours=71, minutes=59, seconds=59),
             event_name=EventName.FOLLOWUP_ELIGIBLE,
-            patient_id_hash=patient.phone_hash,
+            patient_id_hash=patient.patient_id_hash,
             properties={"template_key": "checkin_adesao"},
         )
     )

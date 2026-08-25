@@ -54,6 +54,7 @@ def make_service() -> tuple[
 
 def save_patient(repository: PatientRepository, *, consent: bool = True) -> Patient:
     patient = Patient(
+        patient_id_hash="patient-id-hash",
         phone="5511999999999",
         phone_hash="patient-hash",
         name="Patient",
@@ -80,7 +81,7 @@ def test_start_protocol_persists_session_and_emits_protocol_started() -> None:
     events = event_repository.list_all()
     assert len(events) == 1
     assert events[0].event_name == EventName.PROTOCOL_STARTED
-    assert events[0].patient_id_hash == patient.phone_hash
+    assert events[0].patient_id_hash == patient.patient_id_hash
     assert events[0].properties == {"template_id": "phq9", "template_version": "1.0"}
 
 
