@@ -719,3 +719,9 @@ inspeção pseudonimizada do Event Store
 ```
 
 O happy path completo também foi executado manualmente pela interface Swagger gerada pelo FastAPI.
+
+## Documentação técnica
+
+- [Referência da API](docs/API_REFERENCE.md)
+- [Arquitetura](docs/ARCHITECTURE.md)
+- [Regras de domínio](docs/DOMAIN_RULES.md)
