@@ -15,6 +15,7 @@ PATIENT_ID = UUID("00000000-0000-0000-0000-000000000001")
 def make_patient() -> Patient:
     return Patient(
         patient_id=PATIENT_ID,
+        patient_id_hash="patient-id-hash",
         phone="+5511999999999",
         phone_hash="patient-hash",
         name="Test Patient",
